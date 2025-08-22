@@ -1,0 +1,26 @@
+<%- include('partials/header.ejs'); -%>
+
+<div class="page-wrapper">
+    <main class="card">
+        <h1 class="app-title">Book Notes</h1>
+        <!-- <img class="placeholder-book-cover" src="/assets/no_cover_available" alt="book cover"> -->
+        <img class="book-cover" src="<%= coverUrl %>" onerror=""this.src="/public/assets/no_cover_available.png" alt="Cover for <%= title %>" width="250">
+        <h2 class="book-title"><%= title %></h2>
+        <h3 class="book-author">by <%= author %></h3>
+        <!-- <p class="genre">Self-help</p> -->
+        <!-- <div class="book-rating">
+            <p class="star-rating">⭐️⭐️⭐️⭐️⭐️</p>
+            <p class="avg-rating">4.8</p>
+            <p class="users-reviewed">(21 ratings)</p>
+        </div> -->
+        <p class="year-released"><%= publishDate %></p>
+        <!-- <a href="#" class="want-to-read">➕</a>
+        <a href="#" class="already-read">✔️</a>
+        <a href="#" class="dont-want-to-read">🚫</a> -->
+        <p class="description">Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellendus, illo distinctio ex dolor a esse facilis molestias veritatis dolorum doloribus non aut expedita error, quisquam quia sapiente? Aliquid, obcaecati sequi.</p>
+
+    </main>
+</div>
+
+
+<%- include('partials/footer.ejs'); -%>

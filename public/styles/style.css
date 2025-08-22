@@ -1,0 +1,33 @@
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* Weights: 200, 400, 600 */
+
+body {
+    font-family: "Poppins", sans-serif;
+    font-optical-sizing: auto;
+    background-color: #1A1B21;
+    color: #DCDCDC;
+}
+
+.book-cover {
+    width: 300px;
+}
+
+.description {
+    font-size: .8rem;
+    line-height: 1.25rem;
+}
+
+.book-rating {
+    display: flex;
+}
+
+.want-to-read,
+.already-read,
+.dont-want-to-read {
+    text-decoration: none;
+}
