@@ -27,10 +27,48 @@ app.get("/", (req, res) => {
     res.render("index");
 });
 
+app.get("/books", async (req, res) => {
+    try {
+        const result = await db.query(
+            `SELECT b.id, b.title, b.author, b.publish_date, b.cover_url, b.notes
+            FROM books b
+            ORDER BY b.title ASC`
+        );
+
+        res.render("books", { books: result.rows });
+    } catch (err) {
+        console.error("Error fetching books: ", err);
+        res.status(500).send("Error loading books");
+    }
+});
+
 app.get("/book/:isbn", async (req, res) => {
     const { isbn } = req.params;
 
     try {
+        const existingBook = await db.query(
+            `SELECT b.id, b.title, b.author, b.publish_date, b.cover_url, b.notes
+            FROM books b
+            JOIN isbns i ON b.id = i.book_id
+            WHERE i.isbn = $1`,
+            [isbn]
+        );
+
+        if (existingBook.rows.length > 0) {
+            const book = existingBook.rows[0];
+            const coverUrl = book.cover_url || `/assets/no_cover_available.png`;
+            
+            return res.render("index", {
+                title: book.title,
+                author: book.author,
+                publishDate: book.publish_date,
+                coverUrl,
+                notes: book.notes
+            });
+        }
+
+        console.log("Fetching from Open Library:", `https://openlibrary.org/isbn/${isbn}.json`);
+
         const bookRes = await axios.get(`https://openlibrary.org/isbn/${isbn}.json`);
         const bookData = bookRes.data;
 
@@ -43,22 +81,66 @@ app.get("/book/:isbn", async (req, res) => {
         
         const coverUrl = `https://covers.openlibrary.org/b/isbn/${isbn}-L.jpg`;
         
-        const result = await db.query(
-            "INSERT INTO books (title, author, publish_date) VALUES ($1, $2, $3) RETURNING id",
-            [bookData.title, authorName, bookData.publish_date]
+        const insertResult = await db.query(
+            "INSERT INTO books (title, author, publish_date, cover_url) VALUES ($1, $2, $3, $4) RETURNING id",
+            [bookData.title, authorName, bookData.publish_date, coverUrl]
         );
 
-        console.log("Inserted book with ID:", result.rows[0].id);
+        const bookId = insertResult.rows[0].id;
+
+        await db.query(
+            "INSERT INTO isbns (isbn, book_id) VALUES ($1, $2)",
+            [isbn, bookId]
+        );
+
+        console.log("Inserted book with ID:", bookId);
 
         res.render("index", {
             title: bookData.title,
             author: authorName,
             publishDate: bookData.publish_date,
-            coverUrl
+            coverUrl,
+            notes: null
         });
     } catch (err){
-        console.log(err.message);
+        console.log("Database error: ", err);
         res.status(500).send("Error fetching book details");
+    }
+});
+
+app.get("/books/:id/edit", async (req, res) => {
+    const { id } = req.params;
+    try {
+        const result = await db.query(
+            "SELECT * FROM books WHERE id = $1",
+            [id]
+        );
+
+        if (result.rows.length === 0) {
+            return res.status(404).send("Book not found");
+        }
+
+        res.render("edit-book", { book: result.rows[0] });
+    } catch (err) {
+        console.log("Error fetching book fo edit: ", err);
+        res.status(500).send("Error loading edit form");
+    }
+});
+
+app.post("/books/:id/edit", async (req, res) => {
+    const { id } = req.params;
+    const { title, author, publish_date, notes } = req.body;
+
+    try {
+        await db.query(
+            "UPDATE books SET title = $1, author = $2, publish_date = $3, notes = $4 WHERE id = $5",
+            [title, author, publish_date, notes, id]
+        );
+
+        res.redirect("/books");
+    } catch (err) {
+        console.log("Error updating book: ", err);
+        res.status(500).send("Error updating book");
     }
 });
 

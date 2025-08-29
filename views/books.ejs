@@ -1,0 +1,35 @@
+<%- include('partials/header.ejs'); -%>
+
+<div class="page-wrapper">
+    <main class="card">
+        <h1 class="app-title">Book Notes</h1>
+
+        <% if (books.length === 0) { %>
+            <p>No books saved yet. Try searching by ISBN!</p>
+        <% } else { %>
+            <div class="book-grid">
+                <% books.forEach(book => { %>
+                <div class="book-card">
+                    <img 
+                    src="<%= book.cover_url || '/assets/no_cover_available.png' %>"
+                    onerror="this.src='/assets/no_cover_available.png'"
+                    alt="Cover for <%= book.title %>"
+                    width="150"
+                    >
+                    <h2 class="book-title"><%= book.title %></h2>
+                    <h3 class="book-author">by <%= book.author %></h3>
+                    <p class="publish-date"><%= book.publish_date || 'Unknown date' %></p>
+                    <!-- <a href="#" class="want-to-read">➕</a>
+                    <a href="#" class="already-read">✔️</a>
+                    <a href="#" class="dont-want-to-read">🚫</a> -->
+                    <p class="notes"><%= book.notes || "No notes yet" %></p>
+                    <a href="/book/<%= book.id %>">View Details</a>
+                    <a href="/books/<%= book.id %>/edit" class="edit--button">Edit</a>
+                </div>
+                <% }) %>
+            </div>
+        <% } %>
+    </main>
+</div>
+
+<%- include('partials/footer.ejs'); -%>

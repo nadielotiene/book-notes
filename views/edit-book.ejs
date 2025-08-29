@@ -1,0 +1,23 @@
+<%- include('partials/header.ejs'); -%>
+
+<div class="edit-books--div">
+    <h1 class="edit-title">Edit Book</h1>
+
+    <form class="edit--form" action="/books/<%= book.id %>/edit" method="POST">
+        <label class="title--label">Title: </label><br>
+        <input class="title--input" type="text" name="title" value="<%= book.title %>" required><br>
+
+        <label class="author--label">Author: </label><br>
+        <input class="author--input" type="text" name="author" value="<%= book.author %>" required><br>
+
+        <label class="publish-date--label">Publish Date: </label><br>
+        <input class="publish-date--input" type="text" name="publish_date" value="<%= book.publish_date %>"><br>
+
+        <label class="notes--label">Notes</label><br>
+        <textarea class="notes--input" name="notes"><%= book.notes %></textarea><br>
+
+        <button class="submit--button" type="submit">Save Changes</button>
+    </form>
+</div>
+
+<%- include('partials/footer.ejs'); -%>
