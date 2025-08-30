@@ -42,6 +42,26 @@ app.get("/books", async (req, res) => {
     }
 });
 
+app.post("/books", async (req, res) => {
+    const {title, author, publish_date, cover_url, notes} = req.body;
+
+    const finalCoverUrl = cover_url && cover_url.trim() !== ""
+        ? cover_url
+        : "/assets/no_cover_available.png";
+
+    try {
+        await db.query(
+            "INSERT INTO books (title, author, publish_date, cover_url, notes) VALUES ($1, $2, $3, $4, $5)",
+            [title, author, publish_date, finalCoverUrl, notes]
+        );
+
+      res.redirect("/books");
+    } catch (err) {
+        console.log("Error adding book: ", err);
+        res.status(500).send("Error adding book");
+    }
+});
+
 app.get("/book/:isbn", async (req, res) => {
     const { isbn } = req.params;
 
@@ -143,6 +163,24 @@ app.post("/books/:id/edit", async (req, res) => {
         res.status(500).send("Error updating book");
     }
 });
+
+app.get("/books/new", (req, res) => {
+    res.render("new-book");
+})
+
+app.post("/books/:id/delete", async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        await db.query("DELETE FROM isbns WHERE book_id = $1", [id]);
+        await db.query("DELETE FROM books WHERE id = $1", [id]);
+        res.redirect("/books");
+    } catch (err) {
+        console.log("Error deleting book: ", err);
+        res.status(500).send("Error deleting book");
+    }
+})
+
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);

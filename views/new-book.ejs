@@ -1,0 +1,23 @@
+<div class="page wrapper">
+    <main class="card">
+        <h1>Add a New Book</h1>
+        <form action="/books" method="POST">
+            <label>Title</label><br/>
+            <input type="text" name="title" placeholder="Book Title" required /><br/>
+
+            <label>Author</label><br/>
+            <input type="text" name="author" placeholder="Author" required /><br/>
+
+            <label>Publish Date</label><br/>
+            <input type="date" name="publish_date" /><br/>
+
+            <label>Cover URL (optional)</label><br/>
+            <input type="text" name="cover_url" placeholder="http://... (leave blank for default)" /><br/>
+
+            <label>Notes</label><br/>
+            <textarea name="notes"></textarea><br/>
+
+            <button type="submit">Add Book</button>
+        </form>
+    </main>
+</div>
