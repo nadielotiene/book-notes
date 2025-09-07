@@ -30,8 +30,9 @@ app.get("/", (req, res) => {
 app.get("/books", async (req, res) => {
     try {
         const result = await db.query(
-            `SELECT b.id, b.title, b.author, b.publish_date, b.cover_url, b.notes
+            `SELECT b.id, b.title, b.author, b.publish_date, b.cover_url, b.notes, i.isbn
             FROM books b
+            LEFT JOIN isbns i ON b.id = i.book_id
             ORDER BY b.title ASC`
         );
 
@@ -132,7 +133,10 @@ app.get("/books/:id/edit", async (req, res) => {
     const { id } = req.params;
     try {
         const result = await db.query(
-            "SELECT * FROM books WHERE id = $1",
+            `SELECT b.id, b.title, b.author, b.publish_date, b.notes, b.cover_url, i.isbn
+            FROM books b
+            LEFT JOIN isbns i ON b.id = i.book_id
+            WHERE b.id = $1`,
             [id]
         );
 
@@ -149,13 +153,46 @@ app.get("/books/:id/edit", async (req, res) => {
 
 app.post("/books/:id/edit", async (req, res) => {
     const { id } = req.params;
-    const { title, author, publish_date, notes } = req.body;
+    const { title, author, publish_date, notes, cover_url, isbn } = req.body;
 
     try {
         await db.query(
-            "UPDATE books SET title = $1, author = $2, publish_date = $3, notes = $4 WHERE id = $5",
-            [title, author, publish_date, notes, id]
+            "UPDATE books SET title = $1, author = $2, publish_date = $3, notes = $4, cover_url = $5 WHERE id = $6",
+            [title, author, publish_date, notes, cover_url, id]
         );
+
+        if (isbn && isbn.trim() !== "") {
+            const isbnResult = await db.query(
+                "SELECT * FROM isbns WHERE book_id = $1",
+                [id]
+            );
+
+            const newCoverUrl = `https://covers.openlibrary.org/b/isbn/${isbn}-L.jpg`;
+
+            if (isbnResult.rows.length > 0) {
+                await db.query(
+                    "UPDATE isbns SET isbn = $1 WHERE book_id = $2",
+                    [isbn, id]
+                );
+            } else {
+                await db.query(
+                    "INSERT INTO isbns (isbn, book_id) VALUES ($1, $2)",
+                    [isbn, id]
+                );
+            }
+
+            await db.query(
+                "UPDATE books SET cover_url = $1 WHERE id = $2",
+                [newCoverUrl, id]
+            );
+        } else {
+            await db.query("DELETE FROM isbns WHERE book_id = $1", [id]);
+
+            await db.query(
+                "UPDATE books SET cover_url = $1 WHERE id = $2",
+                ["/assets/no_cover_available.png", id]
+            );
+        }
 
         res.redirect("/books");
     } catch (err) {

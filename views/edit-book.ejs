@@ -1,7 +1,7 @@
 <%- include('partials/header.ejs'); -%>
 
-<div class="edit-books--div">
-    <h1 class="edit-title">Edit Book</h1>
+<div class="page-wrapper">
+    <h1  class="title">Edit Book</h1>
 
     <form class="edit--form" action="/books/<%= book.id %>/edit" method="POST">
         <label class="title--label">Title: </label><br>
@@ -13,10 +13,13 @@
         <label class="publish-date--label">Publish Date: </label><br>
         <input class="publish-date--input" type="text" name="publish_date" value="<%= book.publish_date %>"><br>
 
+        <label class="isbn--label">ISBN: </label><br>
+        <input class="isbn--input" type="text" name="isbn" value="<%= book.isbn || '' %>"><br>
+
         <label class="notes--label">Notes</label><br>
         <textarea class="notes--input" name="notes"><%= book.notes %></textarea><br>
 
-        <button class="submit--button" type="submit">Save Changes</button>
+        <button class="btn submit--button" type="submit">Save Changes</button>
     </form>
 </div>
 

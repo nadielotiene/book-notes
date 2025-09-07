@@ -7,14 +7,66 @@
 /* Weights: 200, 400, 600 */
 
 body {
+    background-color: #1A1B21;
+    background-color: #1C352D;
     font-family: "Poppins", sans-serif;
     font-optical-sizing: auto;
-    background-color: #1A1B21;
-    color: #DCDCDC;
+    color: #FEF3E2;
+    padding: 1rem;
 }
 
-.book-cover {
-    width: 300px;
+.title {
+    margin-bottom: 1.5rem;
+}
+
+.btn {
+    display: flex;
+    align-items: center;
+    background-color: #A4907C;
+    border-radius: 5px;
+    color: #F2F6D0;
+    font-size: 1rem;
+    text-align: start;
+    padding: 5px 12px;
+    margin: 7px 0;
+    border: none;
+    height: 2.1rem;
+    width: 10.5rem;
+}
+
+.icon {
+    width: 25px;
+    margin-right: 7px;
+    filter: invert(9%) sepia(96%) saturate(3857%) hue-rotate(357deg) brightness(108%) contrast(115%);
+}
+
+.btn:hover {
+    background-color: #6B240C;
+    background-color: #74512D;
+}
+
+.delete:hover,
+.delete:focus {
+    background-color: firebrick;
+    cursor: pointer;
+    .icon {
+        filter: invert(100%) sepia(80%) saturate(1568%) hue-rotate(298deg) brightness(95%) contrast(113%);
+    }
+}
+
+.book-card {
+    display: flex;
+}
+
+a { text-decoration: none; }
+
+.book-cover { width: 250px; }
+
+.info--div {
+    display: flex;
+    flex-direction: column;
+    align-items: space-between;
+    margin-left: .75rem;
 }
 
 .description {
@@ -22,12 +74,48 @@ body {
     line-height: 1.25rem;
 }
 
-.book-rating {
-    display: flex;
+.hr {
+    border-top: 5px dotted #A6B28B;
+    height: .6rem;
+    margin: 1rem 0;
 }
 
-.want-to-read,
-.already-read,
-.dont-want-to-read {
-    text-decoration: none;
+.page-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+input,
+textarea {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #FEF3E2;
+    border-radius: 5px;
+    color: #1C352D;
+    font-size: 1rem;
+    text-align: start;
+    padding: 5px 12px;
+    margin: .2rem 0;
+    border: none;
+    height: 2.1rem;
+    width: 25rem;
+    max-width: 25rem;
+    white-space: normal;
+}
+textarea {
+    height: 10rem;
+}
+
+.submit--button {
+    display: flex;
+    justify-content: center;
+    align-items: center;width: 25rem;
+}
+
+
+footer {
+    margin-top: 2rem;
 }
